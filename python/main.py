@@ -8,7 +8,7 @@ import subprocess
 from new_speaker import add_new_speaker
 
 app = Flask(__name__)
-CORS(app)  # Allow frontend requests
+CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins for now
 
 UPLOAD_FOLDER = "uploads"
 AUDIO_FOLDER = "real_time_recordings"
@@ -148,4 +148,5 @@ def delete_audio(filename):
     
 if __name__ == "__main__":
     print("✅ Flask server is running and waiting for requests...")
-    app.run(debug=False, port=5001)
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host="0.0.0.0", port=port, debug=False)
