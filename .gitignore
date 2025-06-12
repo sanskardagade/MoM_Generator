@@ -132,3 +132,24 @@ venv.bak/
 
 # Cython debug symbols
 cython_debug/ 
+
+
+
+
+
+# Node-related
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.env.local
+.env.development
+.env.production
+.next/
+out/
+.DS_Store
+
+# Vite/React/Vue build output
+dist/
+build/
