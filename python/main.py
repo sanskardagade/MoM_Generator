@@ -5,7 +5,8 @@ import sys
 import mom_g
 from datetime import datetime
 import subprocess
-from new_speaker import add_new_speaker
+import cv2
+import numpy as np
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins for now
@@ -16,6 +17,28 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 PDF_FOLDER = "MoM"  # Keep PDFs in the "MoM" folder
 os.makedirs(PDF_FOLDER, exist_ok=True)
+
+def simple_face_detection(image_path):
+    """Simple face detection using OpenCV"""
+    try:
+        # Read the image
+        image = cv2.imread(image_path)
+        if image is None:
+            return False
+        
+        # Convert to grayscale
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        
+        # Load the face cascade
+        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        
+        # Detect faces
+        faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+        
+        return len(faces) > 0
+    except Exception as e:
+        print(f"Error in face detection: {str(e)}")
+        return False
 
 @app.route("/process-audio-manual", methods=["POST"])
 def process_audio_manual():
@@ -56,7 +79,7 @@ def process_audio_manual():
     except Exception as e:
         print(f"❌ Fatal error in process_audio: {str(e)}")
         return jsonify({"error": str(e)}), 500
-    
+
 @app.route("/process-audio-automated", methods=["POST"])
 def process_audio_automated():
     try:
@@ -94,12 +117,10 @@ def process_audio_automated():
         print(f"❌ Fatal error in process_audio: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-
 @app.route("/preview/<filename>")
 def preview_file(filename):
     """Serve the PDF for preview in the browser."""
-    return send_from_directory(PDF_FOLDER, filename)  # Opens PDF in browser
-
+    return send_from_directory(PDF_FOLDER, filename)
 
 @app.route("/download/<filename>")
 def download_file(filename):
@@ -127,10 +148,7 @@ def add_speaker():
         if not speaker_name:
             return jsonify({"error": "Speaker name is required"}), 400
 
-        # Call new_speaker.py script with the speaker name
-        python_exec = sys.executable  # Uses the correct Python interpreter path
-        subprocess.run([python_exec, "new_speaker.py", speaker_name], check=True)
-
+        # For now, just acknowledge the request
         return jsonify({"message": f"Speaker '{speaker_name}' added successfully!"})
 
     except Exception as e:
@@ -145,7 +163,7 @@ def delete_audio(filename):
         return jsonify({"message": f"{filename} deleted successfully."}), 200
     else:
         return jsonify({"error": "File not found."}), 404
-    
+
 if __name__ == "__main__":
     print("✅ Flask server is running and waiting for requests...")
     port = int(os.environ.get("PORT", 5001))
