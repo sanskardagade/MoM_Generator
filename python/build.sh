@@ -2,6 +2,9 @@
 # exit on error
 set -o errexit
 
+# Set environment variables
+export PORT=5001
+
 # Install FFmpeg
 apt-get update
 apt-get install -y ffmpeg
