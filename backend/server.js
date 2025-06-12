@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const authRoutes = require('./routes/auth');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, './.env') });
@@ -9,6 +10,8 @@ const app = express();
 
 // Middleware
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 // MongoDB connection
