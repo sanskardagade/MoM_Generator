@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { API_ENDPOINTS } from "../../config";
 
 export default function Home() {
     const [showLogin, setShowLogin] = useState(true);
@@ -16,12 +15,9 @@ export default function Home() {
     const handleLogin = async (e) => {
         e.preventDefault();
         setAuthError("");
-        console.log('Login attempt with:', { email });
-        console.log('Using API endpoint:', API_ENDPOINTS.LOGIN);
         
         try {
-            console.log('Making login request...');
-            const response = await fetch(API_ENDPOINTS.LOGIN, {
+            const response = await fetch('http://69.62.83.14:3000/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -29,42 +25,25 @@ export default function Home() {
                 body: JSON.stringify({ email, password }),
             });
 
-            console.log('Login response status:', response.status);
-            const responseText = await response.text();
-            console.log('Login raw response:', responseText);
-
-            let data;
-            try {
-                data = JSON.parse(responseText);
-                console.log('Login parsed response:', data);
-            } catch (parseError) {
-                console.error('Failed to parse response:', parseError);
-                throw new Error('Invalid server response');
-            }
+            const data = await response.json();
             
             if (response.ok) {
-                console.log('Login successful, setting token...');
                 login(data.token);
                 setShowLogin(false);
             } else {
-                console.log('Login failed:', data.message);
-                setAuthError(data.message || 'Login failed');
+                setAuthError(data.message);
             }
         } catch (error) {
-            console.error('Login error:', error);
-            setAuthError(error.message || 'An error occurred. Please try again.');
+            setAuthError('An error occurred. Please try again.');
         }
     };
 
     const handleRegister = async (e) => {
         e.preventDefault();
         setAuthError("");
-        console.log('Register attempt with:', { email, name });
-        console.log('Using API endpoint:', API_ENDPOINTS.REGISTER);
 
         try {
-            console.log('Making register request...');
-            const response = await fetch(API_ENDPOINTS.REGISTER, {
+            const response = await fetch('http://69.62.83.14:3000/api/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -72,47 +51,24 @@ export default function Home() {
                 body: JSON.stringify({ email, password, name }),
             });
 
-            console.log('Register response status:', response.status);
-            const responseText = await response.text();
-            console.log('Register raw response:', responseText);
-
-            let data;
-            try {
-                data = JSON.parse(responseText);
-                console.log('Register parsed response:', data);
-            } catch (parseError) {
-                console.error('Failed to parse response:', parseError);
-                throw new Error('Invalid server response');
-            }
+            const data = await response.json();
             
             if (response.ok) {
-                console.log('Registration successful, setting token...');
                 login(data.token);
                 setShowRegister(false);
             } else {
-                console.log('Registration failed:', data.message);
-                setAuthError(data.message || 'Registration failed');
+                setAuthError(data.message);
             }
         } catch (error) {
-            console.error('Registration error:', error);
-            setAuthError(error.message || 'An error occurred. Please try again.');
+            setAuthError('An error occurred. Please try again.');
         }
     };
 
     const handleLogout = () => {
-        console.log('Logging out...');
         localStorage.removeItem('token');
         setIsAuthenticated(false);
         setShowLogin(true);
     };
-
-    // Add a console log to check the current state
-    console.log('Current state:', {
-        isAuthenticated,
-        showLogin,
-        showRegister,
-        authError
-    });
 
     if (!isAuthenticated) {
         return (
