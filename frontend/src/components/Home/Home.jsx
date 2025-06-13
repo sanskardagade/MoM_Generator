@@ -9,7 +9,7 @@ export default function Home() {
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [authError, setAuthError] = useState("");
-    const { isAuthenticated, login } = useAuth();
+    const { isAuthenticated, login, setIsAuthenticated } = useAuth();
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
@@ -17,7 +17,7 @@ export default function Home() {
         setAuthError("");
         
         try {
-            const response = await fetch('http://localhost:3000/api/auth/login', {
+            const response = await fetch('http://69.62.83.14:3000/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ export default function Home() {
         setAuthError("");
 
         try {
-            const response = await fetch('http://localhost:3000/api/auth/register', {
+            const response = await fetch('http://69.62.83.14:3000/api/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -190,35 +190,16 @@ export default function Home() {
                     alt="Meeting Background"
                     className="absolute inset-0 w-full h-full object-cover"
                 />
-                {/* <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="text-center flex items-center gap-16">
-                        <button
-                            onClick={() => navigate('/manual')}
-                            className="bg-blue-600 text-white py-4 px-16 rounded-lg shadow-lg text-2xl font-semibold hover:bg-blue-700 transition transform hover:scale-105"
-                        >
-                            Manual
-                        </button>
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="text-center">
                         <button
                             onClick={() => navigate('/automated')}
                             className="bg-green-600 text-white py-4 px-16 rounded-lg shadow-lg text-2xl font-semibold hover:bg-green-700 transition transform hover:scale-105"
                         >
-                            Automated
-                        </button>
-                    </div>
-                </div> */}
-
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="text-center">
-                        <button
-                        onClick={() => navigate('/automated')}
-                        className="bg-green-600 text-white py-4 px-16 rounded-lg shadow-lg text-2xl font-semibold hover:bg-green-700 transition transform hover:scale-105"
-                        >
-                        Start
+                            Start
                         </button>
                     </div>
                 </div>
-
-
             </div>
         </div>
     );
