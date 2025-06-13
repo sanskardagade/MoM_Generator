@@ -1,0 +1,12 @@
+[Unit]
+Description=MoM Flask Application
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/root/MOM/python
+Environment="PATH=/root/MOM/python/venv/bin"
+ExecStart=/root/MOM/python/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:5000 main:app
+
+[Install]
+WantedBy=multi-user.target 
