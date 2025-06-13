@@ -23,6 +23,7 @@ export default function Home() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ email, password }),
+                mode: 'cors'
             });
 
             const data = await response.json();
@@ -31,9 +32,10 @@ export default function Home() {
                 login(data.token);
                 setShowLogin(false);
             } else {
-                setAuthError(data.message);
+                setAuthError(data.message || 'Login failed');
             }
         } catch (error) {
+            console.error('Login error:', error);
             setAuthError('An error occurred. Please try again.');
         }
     };
@@ -49,6 +51,7 @@ export default function Home() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ email, password, name }),
+                mode: 'cors'
             });
 
             const data = await response.json();
@@ -57,9 +60,10 @@ export default function Home() {
                 login(data.token);
                 setShowRegister(false);
             } else {
-                setAuthError(data.message);
+                setAuthError(data.message || 'Registration failed');
             }
         } catch (error) {
+            console.error('Registration error:', error);
             setAuthError('An error occurred. Please try again.');
         }
     };
