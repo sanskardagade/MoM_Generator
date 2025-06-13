@@ -10,7 +10,14 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://69.62.83.14:5173'],
+    origin: [
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
+        'http://69.62.83.14:5173',
+        'http://69.62.83.14:3000',
+        'http://69.62.83.14:3001',
+        'http://69.62.83.14:5001'
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
