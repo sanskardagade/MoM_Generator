@@ -16,8 +16,11 @@ export default function Home() {
     const handleLogin = async (e) => {
         e.preventDefault();
         setAuthError("");
+        console.log('Login attempt with:', { email });
+        console.log('Using API endpoint:', API_ENDPOINTS.LOGIN);
         
         try {
+            console.log('Making login request...');
             const response = await fetch(API_ENDPOINTS.LOGIN, {
                 method: 'POST',
                 headers: {
@@ -26,15 +29,20 @@ export default function Home() {
                 body: JSON.stringify({ email, password }),
             });
 
+            console.log('Login response status:', response.status);
             const data = await response.json();
+            console.log('Login response data:', data);
             
             if (response.ok) {
+                console.log('Login successful, setting token...');
                 login(data.token);
                 setShowLogin(false);
             } else {
+                console.log('Login failed:', data.message);
                 setAuthError(data.message);
             }
         } catch (error) {
+            console.error('Login error:', error);
             setAuthError('An error occurred. Please try again.');
         }
     };
@@ -42,8 +50,11 @@ export default function Home() {
     const handleRegister = async (e) => {
         e.preventDefault();
         setAuthError("");
+        console.log('Register attempt with:', { email, name });
+        console.log('Using API endpoint:', API_ENDPOINTS.REGISTER);
 
         try {
+            console.log('Making register request...');
             const response = await fetch(API_ENDPOINTS.REGISTER, {
                 method: 'POST',
                 headers: {
@@ -52,24 +63,38 @@ export default function Home() {
                 body: JSON.stringify({ email, password, name }),
             });
 
+            console.log('Register response status:', response.status);
             const data = await response.json();
+            console.log('Register response data:', data);
             
             if (response.ok) {
+                console.log('Registration successful, setting token...');
                 login(data.token);
                 setShowRegister(false);
             } else {
+                console.log('Registration failed:', data.message);
                 setAuthError(data.message);
             }
         } catch (error) {
+            console.error('Registration error:', error);
             setAuthError('An error occurred. Please try again.');
         }
     };
 
     const handleLogout = () => {
+        console.log('Logging out...');
         localStorage.removeItem('token');
         setIsAuthenticated(false);
         setShowLogin(true);
     };
+
+    // Add a console log to check the current state
+    console.log('Current state:', {
+        isAuthenticated,
+        showLogin,
+        showRegister,
+        authError
+    });
 
     if (!isAuthenticated) {
         return (
