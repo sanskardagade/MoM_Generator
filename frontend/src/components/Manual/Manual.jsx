@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_ENDPOINTS } from '../../config';
 
 export default function Manual() {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -97,14 +98,14 @@ export default function Manual() {
         formData.append("meetingTime", meetingTime);
 
         try {
-            const response = await fetch("http://localhost:5001/process-audio-manual", {
+            const response = await fetch(API_ENDPOINTS.PROCESS_AUDIO_MANUAL, {
                 method: "POST",
                 body: formData
             });
 
             const data = await response.json();
             if (data.pdf_url) {
-                setPdfURL(`http://localhost:5001${data.pdf_url}`);
+                setPdfURL(API_ENDPOINTS.PREVIEW_FILE(data.pdf_url.split('/').pop()));
             }
         } catch (error) {
             console.error("Error:", error);
@@ -149,7 +150,7 @@ export default function Manual() {
 
     const fetchAudioFiles = async () => {
         try {
-            const response = await fetch("http://localhost:5001/list-audio-files");
+            const response = await fetch(API_ENDPOINTS.LIST_AUDIO_FILES);
             const data = await response.json();
             setAudioFiles(data.audios);
             setShowAudioList(true);
@@ -185,7 +186,7 @@ export default function Manual() {
         }, 1000);
     
         try {
-            const response = await fetch("http://localhost:5001/add-speaker", {
+            const response = await fetch(API_ENDPOINTS.ADD_SPEAKER, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -200,16 +201,13 @@ export default function Manual() {
                 setMessage(`❌ Error: ${data.error || "Failed to add speaker."}`);
             }
         } catch (error) {
-            console.error("❌ Error:", error);
-            setMessage("❌ Failed to connect to server.");
-        }
-    
-        setTimeout(() => {
-            setMessage("");
+            console.error("Error adding speaker:", error);
+            setMessage("❌ Error adding speaker. Please try again.");
+        } finally {
+            setIsRecording(false);
             setShowSpeakerInput(false);
             setSpeakerName("");
-            setIsRecording(false);
-        }, 3000);
+        }
     };
 
     const deleteAudioFile = async (filename) => {

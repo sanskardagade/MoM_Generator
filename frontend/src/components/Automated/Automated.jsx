@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_ENDPOINTS } from '../../config';
 
 export default function Automated() {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -91,14 +92,14 @@ export default function Automated() {
         formData.append("meetingHead", meetingHead);
 
         try {
-            const response = await fetch("http://localhost:5001/process-audio-automated", {
+            const response = await fetch(API_ENDPOINTS.PROCESS_AUDIO_AUTOMATED, {
                 method: "POST",
                 body: formData
             });
 
             const data = await response.json();
             if (data.pdf_url) {
-                setPdfURL(`http://localhost:5001${data.pdf_url}`);
+                setPdfURL(API_ENDPOINTS.PREVIEW_FILE(data.pdf_url.split('/').pop()));
             }
         } catch (error) {
             console.error("Error:", error);
@@ -155,7 +156,7 @@ export default function Automated() {
 
     const fetchAudioFiles = async () => {
         try {
-            const response = await fetch("http://localhost:5001/list-audio-files");
+            const response = await fetch(API_ENDPOINTS.LIST_AUDIO_FILES);
             const data = await response.json();
             setAudioFiles(data.audios);
             setShowAudioList(true);
@@ -191,7 +192,7 @@ export default function Automated() {
         }, 1000);
     
         try {
-            const response = await fetch("http://localhost:5001/add-speaker", {
+            const response = await fetch(API_ENDPOINTS.ADD_SPEAKER, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -206,16 +207,13 @@ export default function Automated() {
                 setMessage(`❌ Error: ${data.error || "Failed to add speaker."}`);
             }
         } catch (error) {
-            console.error("❌ Error:", error);
-            setMessage("❌ Failed to connect to server.");
-        }
-    
-        setTimeout(() => {
-            setMessage("");
+            console.error("Error adding speaker:", error);
+            setMessage("❌ Error adding speaker. Please try again.");
+        } finally {
+            setIsRecording(false);
             setShowSpeakerInput(false);
             setSpeakerName("");
-            setIsRecording(false);
-        }, 3000);
+        }
     };
 
     const deleteAudioFile = async (filename) => {
@@ -223,7 +221,7 @@ export default function Automated() {
         if (!confirmDelete) return;
 
         try {
-            const response = await fetch(`http://localhost:5001/delete-audio/${filename}`, { method: "DELETE" });
+            const response = await fetch(API_ENDPOINTS.DELETE_AUDIO(filename), { method: "DELETE" });
             if (response.ok) {
                 setAudioFiles(audioFiles.filter(file => file !== filename)); // Remove from UI
             } else {
