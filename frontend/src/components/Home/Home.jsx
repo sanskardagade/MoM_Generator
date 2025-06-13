@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { API_ENDPOINTS } from "../../config";
 
 export default function Home() {
     const [showLogin, setShowLogin] = useState(true);
@@ -17,7 +18,7 @@ export default function Home() {
         setAuthError("");
         
         try {
-            const response = await fetch('/api/auth/login', {
+            const response = await fetch(API_ENDPOINTS.LOGIN, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,7 +44,7 @@ export default function Home() {
         setAuthError("");
 
         try {
-            const response = await fetch('/api/auth/register', {
+            const response = await fetch(API_ENDPOINTS.REGISTER, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
