@@ -30,8 +30,17 @@ export default function Home() {
             });
 
             console.log('Login response status:', response.status);
-            const data = await response.json();
-            console.log('Login response data:', data);
+            const responseText = await response.text();
+            console.log('Login raw response:', responseText);
+
+            let data;
+            try {
+                data = JSON.parse(responseText);
+                console.log('Login parsed response:', data);
+            } catch (parseError) {
+                console.error('Failed to parse response:', parseError);
+                throw new Error('Invalid server response');
+            }
             
             if (response.ok) {
                 console.log('Login successful, setting token...');
@@ -39,11 +48,11 @@ export default function Home() {
                 setShowLogin(false);
             } else {
                 console.log('Login failed:', data.message);
-                setAuthError(data.message);
+                setAuthError(data.message || 'Login failed');
             }
         } catch (error) {
             console.error('Login error:', error);
-            setAuthError('An error occurred. Please try again.');
+            setAuthError(error.message || 'An error occurred. Please try again.');
         }
     };
 
@@ -64,8 +73,17 @@ export default function Home() {
             });
 
             console.log('Register response status:', response.status);
-            const data = await response.json();
-            console.log('Register response data:', data);
+            const responseText = await response.text();
+            console.log('Register raw response:', responseText);
+
+            let data;
+            try {
+                data = JSON.parse(responseText);
+                console.log('Register parsed response:', data);
+            } catch (parseError) {
+                console.error('Failed to parse response:', parseError);
+                throw new Error('Invalid server response');
+            }
             
             if (response.ok) {
                 console.log('Registration successful, setting token...');
@@ -73,11 +91,11 @@ export default function Home() {
                 setShowRegister(false);
             } else {
                 console.log('Registration failed:', data.message);
-                setAuthError(data.message);
+                setAuthError(data.message || 'Registration failed');
             }
         } catch (error) {
             console.error('Registration error:', error);
-            setAuthError('An error occurred. Please try again.');
+            setAuthError(error.message || 'An error occurred. Please try again.');
         }
     };
 
